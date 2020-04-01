@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1585748602 source:e:\cs 202 hws\c-decision-tree\cs202_decision_tree\src\decisiontreenode.cpp
+	"DecisionTreeNode.h"
+
+1585748602 e:\cs 202 hws\c-decision-tree\cs202_decision_tree\include\decisiontreenode.h
+
+1585752512 source:e:\cs 202 hws\c-decision-tree\cs202_decision_tree\src\decisiontree.cpp
+	"DecisionTree.h"
+
+1585752504 e:\cs 202 hws\c-decision-tree\cs202_decision_tree\include\decisiontree.h
+
+1585755553 source:e:\cs 202 hws\c-decision-tree\cs202_decision_tree\src\calculate.cpp
+	"Calculate.h"
+	<cmath>
+
+1585752682 e:\cs 202 hws\c-decision-tree\cs202_decision_tree\include\calculate.h
+
+1585754133 source:e:\cs 202 hws\c-decision-tree\cs202_decision_tree\src\main.cpp
+	<stdio.h>
+	<iostream>
+	"Calculate.h"
+
