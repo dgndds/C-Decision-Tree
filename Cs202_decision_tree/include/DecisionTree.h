@@ -1,10 +1,12 @@
 #ifndef DECISIONTREE_H
 #define DECISIONTREE_H
 
+//template< class int>;
 
 class DecisionTree
 {
     public:
+
 //        void train(const bool**, const int*, const int, const int);
 //        void train(const string, const int, const int);
 //        int predict(const bool*);
@@ -16,3 +18,5 @@ class DecisionTree
 };
 
 #endif // DECISIONTREE_H
+
+

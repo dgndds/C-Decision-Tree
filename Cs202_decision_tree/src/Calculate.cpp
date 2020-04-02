@@ -47,7 +47,7 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
     for(int i = 0; i < numSamples; i++){
         if(usedSamples[i]){
                 if(data[i][featureId] == 0 ){
-                    if(data[i][numFeatures] == 1){
+                    if(data[i][numFeatures] == 0){
                         leftArr[0] = leftArr[0] + 1;
                     }else if(data[i][numFeatures] == 2){
                         leftArr[1] = leftArr[1] + 1;

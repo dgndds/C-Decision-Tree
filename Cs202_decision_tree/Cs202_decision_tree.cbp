@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -22,6 +23,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -31,6 +33,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/Calculate.h" />
+		<Unit filename="include/DecisionTree.h" />
+		<Unit filename="include/DecisionTreeNode.h" />
+		<Unit filename="include/main.h" />
+		<Unit filename="src/Calculate.cpp" />
+		<Unit filename="src/DecisionTree.cpp" />
+		<Unit filename="src/DecisionTreeNode.cpp" />
+		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
