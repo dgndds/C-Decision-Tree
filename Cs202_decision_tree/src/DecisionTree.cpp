@@ -12,9 +12,14 @@ void DecisionTree::train(const bool** data, const int* labels, const int numSamp
 
 
     bool usedSamplesArr[numSamples];
+    bool usedLabelsArr[numFeatures];
 
     for(int i = 0; i < numSamples; i++){
         usedSamplesArr[i] = true;
+    }
+
+    for(int i = 0; i < numFeatures; i++){
+        usedLabelsArr[i] = false;
     }
 
     double maxInfoGain = 0;
@@ -28,37 +33,40 @@ void DecisionTree::train(const bool** data, const int* labels, const int numSamp
         }
     }
 
-    root = new DecisionTreeNode(chosenFeatureIndex);
+    root = new DecisionTreeNode(chosenFeatureIndex + 1);
+    usedLabelsArr[chosenFeatureIndex] = true;
     //usedLabels[chosenFeatureIndex] = true;
 //    int rootItem = root ->getItem();
   //  int currItem = curr ->getItem();
-bool* usedLabels = new bool[numSamples];
+  //---------------------------------------------------------------------------------------
+  //bura
+   // bool* usedLabels = new bool[numSamples];
 
-for(int i = 0; i < numSamples; i++){
-        if(data[i][chosenFeatureIndex] == 0){
-            usedLabels[i] = true;
+    for(int i = 0; i < numSamples; i++){
+            if(data[i][chosenFeatureIndex] == 0){
+                usedSamplesArr[i] = true;
+            }else{
+                usedSamplesArr[i] = false;
+            }
+        }
+
+    int counter = 1;
+    root->setLeftChildPtr(split(data, labels,numSamples, numFeatures,usedSamplesArr,root,counter,usedLabelsArr));
+
+    for(int i = 0; i < numSamples; i++){
+        //cout << i << "deki sayı " << data[i][4] << endl;
+
+        if(data[i][chosenFeatureIndex] == 1){
+            usedSamplesArr[i] = true;
         }else{
-            usedLabels[i] = false;
+            usedSamplesArr[i] = false;
         }
     }
 
-    int counter = 1;
-root->setLeftChildPtr(split(data, labels,numSamples, numFeatures,usedLabels,root,counter));
-
-for(int i = 0; i < numSamples; i++){
-        //cout << i << "deki sayı " << data[i][4] << endl;
-
-        if(data[i][chosenFeatureIndex] == 0){
-            usedLabels[i] = true;
-        }else{
-            usedLabels[i] = false;
-        }
+    root->setRightChildPtr(split(data, labels,numSamples, numFeatures,usedSamplesArr,root,counter,usedLabelsArr));
 }
 
-root->setRightChildPtr(split(data, labels,numSamples, numFeatures,usedLabels,root,counter));
-}
-
-DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedLabels,DecisionTreeNode* node,int& counter){
+DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedSamplesArr,DecisionTreeNode* node,int& counter, bool usedLabelsArr[]){
     double maxInfoGain = 0;
     double infoGain = 0;
     int chosenIndex = 0;
@@ -67,9 +75,9 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
         return NULL;
     }
 
-    for(int i = 0; i < numSamples; i++){
-        if(usedLabels[i]){
-            infoGain = calculateInformationGain(data, labels, numSamples,numFeatures,usedLabels,i);
+    for(int i = 0; i < numFeatures; i++){
+        if(!usedLabelsArr[i]){
+            infoGain = calculateInformationGain(data, labels, numSamples,numFeatures,usedSamplesArr,i);
         }
 
         if(infoGain >= maxInfoGain){
@@ -78,35 +86,36 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
         }
     }
 
-    if(maxInfoGain == 1){
-        DecisionTreeNode* newNode = new DecisionTreeNode(labels[chosenIndex]);
+    if(maxInfoGain == 0){
+        DecisionTreeNode* newNode = new DecisionTreeNode(labels[chosenIndex]+40);
+        //usedLabelsArr[chosenIndex] = true;
         return newNode;
     }
 
     DecisionTreeNode* newNode = new DecisionTreeNode(chosenIndex);
     counter++;
 
-    bool* recursiveUsedLabels = new bool[numFeatures];
+    bool* recursiveUsedSamples = new bool[numSamples];
 
-    for(int i = 0; i < numFeatures; i++){
-        if(usedLabels[i] && data[i][chosenIndex] == 1){
-            recursiveUsedLabels[i] = true;
+    for(int i = 0; i < numSamples; i++){
+        if(usedSamplesArr[i] && data[i][chosenIndex] == 0){
+            recursiveUsedSamples[i] = true;
         }else{
-            recursiveUsedLabels[i] = false;
+            recursiveUsedSamples[i] = false;
         }
     }
 
-    newNode->setLeftChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedLabels,newNode, counter));
+    newNode->setLeftChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedSamples,newNode, counter, usedLabelsArr));
 
-        for(int i = 0; i < numFeatures; i++){
-            if(usedLabels[i] && data[i][chosenIndex] == 0){
-                recursiveUsedLabels[i] = true;
+        for(int i = 0; i < numSamples; i++){
+            if(usedSamplesArr[i] && data[i][chosenIndex] == 1){
+                recursiveUsedSamples[i] = true;
             }else{
-                recursiveUsedLabels[i] = false;
+                recursiveUsedSamples[i] = false;
             }
         }
 
-    newNode->setRightChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedLabels,newNode,counter));
+    newNode->setRightChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedSamples,newNode,counter,usedLabelsArr));
     return newNode;
 }
 
@@ -141,20 +150,22 @@ void DecisionTree::preorder(DecisionTreeNode* node) {
 
 void DecisionTree::train(const string fileName, const int numSamples, const int numFeatures){
 
-    ifstream infileReader;
+    ifstream dataReader;
+    ifstream labelReader;
 
-    infileReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt"); //""
-    cout << infileReader.is_open()<< endl;
+    dataReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt"); //""
+   // cout << dataReader.is_open()<< endl;
     int condition;
 
     const bool** data = new const bool* [numSamples];
 
+    int counter = 0;
     for(int i = 0; i < numSamples; i++){
         bool* line = new bool[numFeatures];
-        int counter = 0;
+
         bool loop = true;
 
-        while(infileReader >> condition && loop){
+    while((dataReader >> condition) && loop){
             //cout<< condition << endl;
             line[counter] = condition;
             counter++;
@@ -164,14 +175,35 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
         }
         //infileReader >> condition;
         //loop = true;
+        counter = 0;
         data[i] = line;
     }
 
+    labelReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt");
 
-    for(int i = 0; i < numSamples; i++){
-        for(int j = 0; j < numFeatures; j++){
-            cout << data[i][j];
-        }
-        cout << endl;
+    int* labels = new int[numSamples];
+
+    counter = 1;
+
+    while(labelReader >> condition){
+        if(counter % 22 == 0)
+            labels[(counter / 22) - 1 ] = condition;
+        counter++;
     }
+
+
+//    for(int i = 0; i < numSamples; i++){
+//            //out << labels[i] << endl;
+//        for(int j = 0; j < numFeatures; j++){
+//            cout << data[i][j];
+//        }
+//        cout << endl;
+//    }
+//
+//    cout <<"----------------------------------------------- "<<endl;
+//    for(int i = 0; i < numSamples; i++){
+//            cout << labels[i] << endl;
+//    }
+
+    train(data, labels, numSamples,numFeatures);
 }

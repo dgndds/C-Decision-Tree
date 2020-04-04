@@ -41,7 +41,7 @@ int main( int argc, const char* argv[] )
     DecisionTree tree;
 //    tree.train(data, labels, 5,5);
 ////
-//    tree.print();
+//
 //
 ////        //Free each sub-array
 ////    for(int i = 0; i < 5; ++i) {
@@ -53,6 +53,7 @@ int main( int argc, const char* argv[] )
     const string fileName = "train_data.txt";
 
     tree.train(fileName, 498 ,21);
+    tree.print();
 
 	return 0;
 

@@ -12,7 +12,6 @@ class DecisionTree
     public:
 
         void train(const bool** data, const int* labels, const int numSamples, const int numFeatures);
-        DecisionTreeNode* split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedLabels,DecisionTreeNode* node, int& counter);
         void train(const string fileName, const int numSamples, const int numFeatures);
 //        int predict(const bool*);
 //        double test(const bool**, const int*, const int);
@@ -23,6 +22,7 @@ class DecisionTree
         DecisionTreeNode* leftChild;
         DecisionTreeNode* rightChild;
         void preorder(DecisionTreeNode* root);
+        DecisionTreeNode* split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedSamples,DecisionTreeNode* node, int& counter,bool usedLabelsArr[]);
 
 };
 

@@ -12,9 +12,10 @@ double calculateEntropy(const int* classCounts, const int numClasses){
     }
 
     for(int i = 0; i < numClasses; i++){
-        double div = (double)classCounts[i]/(double)sum;
-        if(div > 0){
-            result += (div)*(log2(div));
+        if(sum > 0){
+            double div = (double)classCounts[i]/(double)sum;
+            if(div > 0)
+                result += (div)*(log2(div));
         }
 
     }
@@ -22,6 +23,7 @@ double calculateEntropy(const int* classCounts, const int numClasses){
     result = (-1) * result;
 
     return result;
+
 }
 
 double calculateInformationGain(const bool** data, const int* labels, const int numSamples, const int numFeatures, const bool* usedSamples, const int featureId){
@@ -29,9 +31,12 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
     int leftArr[3] = {0,0,0};
     int rightArr[3] = {0,0,0};
 
+     int observationCount = 0;
+
     // Calculate label counts of each used label for parent root
     for(int i = 0; i < numSamples; i++){
         if(usedSamples[i]){
+            observationCount++;
             if(labels[i] == 1){
                 parentArr[0] = parentArr[0] + 1;
             }else if(labels[i] == 2){
@@ -66,12 +71,27 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
                 }
         }
     }
+    // Calculate sum of left node subset
+    int leftSum = 0;
+
+    for(int i = 0; i < 3; i++){
+        leftSum += leftArr[i];
+    }
+    // Calculate sum of right node subset
+    int rightSum = 0;
+
+    for(int i = 0; i < 3; i++){
+        rightSum += rightArr[i];
+    }
 
     // Calculate entropy of each used label for parent and child roots
     double entParent = calculateEntropy(parentArr,3);
     double entLeft = calculateEntropy(leftArr,3);
     double entRight = calculateEntropy(rightArr,3);
 
+    double division = (double)leftSum/(double)observationCount;
+
+    double result = entParent - (((double)leftSum/(double)observationCount)*entLeft + ((double)rightSum/(double)observationCount)*entRight);
     // Return calculated information gain
-    return entParent - (entLeft + entRight);
+    return result;
 }
