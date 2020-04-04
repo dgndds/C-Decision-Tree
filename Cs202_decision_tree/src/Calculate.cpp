@@ -32,9 +32,9 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
     // Calculate label counts of each used label for parent root
     for(int i = 0; i < numSamples; i++){
         if(usedSamples[i]){
-            if(data[i][numFeatures] == 1){
+            if(labels[i] == 1){
                 parentArr[0] = parentArr[0] + 1;
-            }else if(data[i][numFeatures] == 2){
+            }else if(labels[i] == 2){
                 parentArr[1] = parentArr[1] + 1;
             }else{
                 parentArr[2] = parentArr[2] + 1;
@@ -47,18 +47,18 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
     for(int i = 0; i < numSamples; i++){
         if(usedSamples[i]){
                 if(data[i][featureId] == 0 ){
-                    if(data[i][numFeatures] == 0){
+                    if(labels[i] == 1){
                         leftArr[0] = leftArr[0] + 1;
-                    }else if(data[i][numFeatures] == 2){
+                    }else if(labels[i] == 2){
                         leftArr[1] = leftArr[1] + 1;
                     }else{
                         leftArr[2] = leftArr[2] + 1;
                     }
 
                 }else{
-                    if(data[i][numFeatures] == 1){
+                    if(labels[i] == 1){
                         rightArr[0] = rightArr[0] + 1;
-                    }else if(data[i][numFeatures] == 2){
+                    }else if(labels[i] == 2){
                         rightArr[1] = rightArr[1] + 1;
                     }else{
                         rightArr[2] = rightArr[2] + 1;

@@ -39,11 +39,20 @@ void DecisionTreeNode::setLeaf(const bool newLeaf) {
 }
 
 DecisionTreeNode* DecisionTreeNode::getLeftChildPtr() const{
-    return leftChildPtr;
+    if(leftChildPtr != NULL){
+        return leftChildPtr;
+    }else{
+        return NULL;
+    }
+
 }
 
 DecisionTreeNode* DecisionTreeNode::getRightChildPtr() const{
-    return rightChildPtr;
+    if(rightChildPtr != NULL){
+        return rightChildPtr;
+    }else{
+        return NULL;
+    }
 }
 void DecisionTreeNode::setLeftChildPtr(DecisionTreeNode* leftPtr){
     leftChildPtr = leftPtr;
