@@ -55,6 +55,9 @@ int main( int argc, const char* argv[] )
     tree.train(fileName, 498 ,21);
     tree.print();
 
+    const bool* predictArr = new const bool[21]{0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1};
+    cout << tree.predict(predictArr) << endl;
+
 	return 0;
 
 }
