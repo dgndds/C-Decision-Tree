@@ -6,24 +6,24 @@
 using namespace std;
 
 void DecisionTree::train(const bool** data, const int* labels, const int numSamples, const int numFeatures){
-    //DecisionTreeNode* curr = root;
-    //int* featureStatus = new int[numFeatures];
     int chosenFeatureIndex = 0;
-
 
     bool usedSamplesArr[numSamples];
     bool usedLabelsArr[numFeatures];
 
+    // Define all samples will be used for finding root
     for(int i = 0; i < numSamples; i++){
         usedSamplesArr[i] = true;
     }
 
+    // Define all features are not yet used
     for(int i = 0; i < numFeatures; i++){
         usedLabelsArr[i] = false;
     }
 
     double maxInfoGain = 0;
 
+    // Find the feature with max information
     for(int i = 0; i < numFeatures; i++){
         double infoGain = calculateInformationGain(data, labels, numSamples, numFeatures, usedSamplesArr,i);
 
@@ -33,15 +33,11 @@ void DecisionTree::train(const bool** data, const int* labels, const int numSamp
         }
     }
 
+    // Set root node to feature with max information gain and report this feature is used
     root = new DecisionTreeNode(chosenFeatureIndex);
     usedLabelsArr[chosenFeatureIndex] = true;
-    //usedLabels[chosenFeatureIndex] = true;
-//    int rootItem = root ->getItem();
-  //  int currItem = curr ->getItem();
-  //---------------------------------------------------------------------------------------
-  //bura
-   // bool* usedLabels = new bool[numSamples];
 
+    // Define which samples will be used for deciding left child (0 means left node 1 means right node)
     for(int i = 0; i < numSamples; i++){
             if(data[i][chosenFeatureIndex] == 0){
                 usedSamplesArr[i] = true;
@@ -51,12 +47,12 @@ void DecisionTree::train(const bool** data, const int* labels, const int numSamp
         }
 
     int counter = 1;
-    //cout << "before: " << counter << endl;
-    root->setLeftChildPtr(split(data, labels,numSamples, numFeatures,usedSamplesArr,root,counter,usedLabelsArr));
-    //cout << "After: " << counter << endl;
-    for(int i = 0; i < numSamples; i++){
-        //cout << i << "deki sayı " << data[i][4] << endl;
 
+    // Set left child node of the root which is also a subtree
+    root->setLeftChildPtr(split(data, labels,numSamples, numFeatures,usedSamplesArr,root,counter,usedLabelsArr));
+
+    // Define which samples will be used for deciding left child (0 means left node 1 means right node)
+    for(int i = 0; i < numSamples; i++){
         if(data[i][chosenFeatureIndex] == 1){
             usedSamplesArr[i] = true;
         }else{
@@ -64,36 +60,30 @@ void DecisionTree::train(const bool** data, const int* labels, const int numSamp
         }
     }
 
+    // Reset usedLabelsArr for right child
     for(int i = 0; i < numFeatures; i++){
         usedLabelsArr[i] = false;
     }
 
     usedLabelsArr[chosenFeatureIndex] = true;
-
     counter = 1;
+
+    // Set left child node of the root which is also a subtree
     root->setRightChildPtr(split(data, labels,numSamples, numFeatures,usedSamplesArr,root,counter,usedLabelsArr));
 }
 
 DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedSamplesArr,DecisionTreeNode* node,const int counter, bool usedLabelsArr[]){
+    //Initialize local variables
     double maxInfoGain = 0;
     double infoGain = 0;
     int chosenIndex = 0;
     int oldCounter = counter;
-    //counter++;
 
-//    if(counter > numFeatures){
-//        return NULL;
-//    }
-
+    // Find feature with max information gain using labels not used by ancestors of the node
     for(int i = 0; i < numFeatures; i++){
         if(!usedLabelsArr[i]){
             infoGain = calculateInformationGain(data, labels, numSamples,numFeatures,usedSamplesArr,i);
         }
-
-//        if(infoGain == 0 && !usedLabelsArr[i]){
-//            chosenIndex = i;
-//            break;
-//        }
 
         if(infoGain >= maxInfoGain){
             maxInfoGain = infoGain;
@@ -102,29 +92,21 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
         infoGain = 0;
     }
 
+    // If information gain is zero or number of features is exceeded, then create a leaf node
     if(maxInfoGain == 0 || counter > numFeatures){
 
+    // Initialize variables and arrays
     int labelCount = 0;
+
+    // Get each class label used in data set along with number of them (for given data set it is {1,2,3} and 3)
     int* uniqeLabels = findFeatureFrequecy(labels, usedSamplesArr, numSamples,labelCount);
     int countLabelsArr[labelCount];
 
     for(int i = 0; i < labelCount; i++){
         countLabelsArr[i] = 0;
     }
-    // Calculate label counts of each used label for parent root
-//    for(int i = 0; i < numSamples; i++){
-//        if(usedSamplesArr[i]){
-//            if(labels[i] == 1){
-//                countLabelsArr[0] = countLabelsArr[0] + 1;
-//            }else if(labels[i] == 2){
-//                countLabelsArr[1] = countLabelsArr[1] + 1;
-//            }else{
-//                countLabelsArr[2] = countLabelsArr[2] + 1;
-//            }
-//
-//        }
-//    }
 
+    //Count each label
     for(int i = 0; i < numSamples; i++){
             for(int j = 0; j < labelCount ; j++){
                 if(usedSamplesArr[i] && (labels[i] == uniqeLabels[j])){
@@ -136,32 +118,26 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
     int maxLabel = 0;
     int maxValue = 0;
 
+    // Find the class label with greatest count
     for(int i = 0; i < labelCount; i++){
         if(countLabelsArr[i] >= maxValue){
            maxValue =  countLabelsArr[i];
-           maxLabel = i ;//+ 1;
+           maxLabel = i ;
         }
     }
 
-        DecisionTreeNode* newNode = new DecisionTreeNode(uniqeLabels[maxLabel]);
-        newNode->setLeaf(true);
-        //usedLabelsArr[chosenIndex] = true;
-        //if(counter > numFeatures){
-           // counter--;
-       // }
-
-        return newNode;
+    // Make a leaf node with most repeated class label and return it
+    DecisionTreeNode* newNode = new DecisionTreeNode(uniqeLabels[maxLabel]);
+    newNode->setLeaf(true);
+    return newNode;
     }
 
-    //if(maxInfoGain == 0){
-        //usedLabelsArr[chosenIndex] = true;
-        //return NULL;
-    //}
-
+    // Make node with greatest information gain a decision node
     DecisionTreeNode* newNode = new DecisionTreeNode(chosenIndex);
     usedLabelsArr[chosenIndex] = true;
     oldCounter++;
 
+    // Redefining which labels are going to be used to decide child node
     bool* recursiveUsedSamples = new bool[numSamples];
 
     for(int i = 0; i < numSamples; i++){
@@ -172,91 +148,78 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
         }
     }
 
+    // Set child of newly created node by using recursion
     newNode->setLeftChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedSamples,newNode, oldCounter, usedLabelsArr));
 
-        for(int i = 0; i < numSamples; i++){
-            if(usedSamplesArr[i] && data[i][chosenIndex] == 1){
-                recursiveUsedSamples[i] = true;
-            }else{
-                recursiveUsedSamples[i] = false;
-            }
+    // Redefining which labels are going to be used to decide child node
+    for(int i = 0; i < numSamples; i++){
+        if(usedSamplesArr[i] && data[i][chosenIndex] == 1){
+            recursiveUsedSamples[i] = true;
+        }else{
+            recursiveUsedSamples[i] = false;
         }
+    }
 
+    // Set child of newly created node by using recursion
     newNode->setRightChildPtr(split(data,labels,numSamples,numFeatures,recursiveUsedSamples,newNode,oldCounter,usedLabelsArr));
 
+    // Return the created node
     return newNode;
 }
 
 void DecisionTree::print(){
-//    DecisionTreeNode* curr = root;
-//
-//    while(curr != NULL ){
-//        cout << curr->getItem() << endl;
-//        curr = curr->getLeftChildPtr();
-//    }
-//
-//    print();
-//
-//    curr = root;
-//
-//    while(curr != NULL ){
-//        cout << curr->getItem() << endl;
-//        curr = curr->getRightChildPtr();
-//    }
-//    print();
     preorder(root,0);
 }
 
 void DecisionTree::preorder(DecisionTreeNode* node,const int tabCount) {
     int oldTabCount = tabCount;
 
-
-
-   if (node != NULL) {
+    if (node != NULL) {
+        // Check if current node is leaf
         if(!node->isLeaf()){
-             cout<< node->getItem()<<endl;
-             //cout << "\t";
-             oldTabCount++;
-             for(int i = 0; i < oldTabCount; i++){
+            // Print the node
+            cout<< node->getItem()<<endl;
+            oldTabCount++;
+
+            // Print desired amount of tabs
+            for(int i = 0; i < oldTabCount; i++){
                 cout << "\t";
             }
-
         }else{
-             cout<< "class = " << node->getItem()<<endl;
-             //cout << "\t";
-             //oldTabCount--;
+            // Print the leaf node
+            cout<< "class = " << node->getItem()<<endl;
 
-             for(int i = 0; i < oldTabCount; i++){
+            // Print desired amount of tabs
+            for(int i = 0; i < oldTabCount; i++){
                 cout << "\t";
             }
-
         }
 
-
-
-
+    // Print left subtree
     preorder(node->getLeftChildPtr(),oldTabCount);
-        //cout << "\t";
 
-      preorder(node->getRightChildPtr(),oldTabCount);
-oldTabCount++;
+    // Print right subtree
+    preorder(node->getRightChildPtr(),oldTabCount);
+
+    oldTabCount++;
 
    }
 }
 
 void DecisionTree::train(const string fileName, const int numSamples, const int numFeatures){
+    // Keep number of features and samples to use later
     featureNum = numFeatures;
     sampleNum = numSamples;
 
     ifstream dataReader;
     ifstream labelReader;
 
-    dataReader.open(fileName.c_str()); //""
-   // cout << dataReader.is_open()<< endl;
+    dataReader.open(fileName.c_str());
     int condition;
 
     const bool** data = new const bool* [numSamples];
 
+    // Read samples
     int counter = 0;
     for(int i = 0; i < numSamples; i++){
         bool* line = new bool[numFeatures];
@@ -264,15 +227,13 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
         bool loop = true;
 
     while((dataReader >> condition) && loop){
-            //cout<< condition << endl;
             line[counter] = condition;
             counter++;
 
             if(counter == numFeatures)
                 loop = false;
         }
-        //infileReader >> condition;
-        //loop = true;
+
         counter = 0;
         data[i] = line;
     }
@@ -280,25 +241,16 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
     labelReader.open(fileName.c_str());
 
     int* labels = new int[numSamples];
-
     counter = 1;
 
+    // Read labels
     while(labelReader >> condition){
         if(counter % (numFeatures + 1) == 0)
             labels[(counter / (numFeatures + 1)) - 1 ] = condition;
         counter++;
     }
 
-
-//    for(int i = 0; i < numSamples; i++){
-//            //out << labels[i] << endl;
-//        for(int j = 0; j < numFeatures; j++){
-//            cout << data[i][j];
-//        }
-//        cout << endl;
-//    }
-//
-//    cout <<"----------------------------------------------- "<<endl;
+    // Find how many different features there are in labels and store it
     for(int i = 0; i < numSamples; i++){
         int j = 0;
         for(j = 0; j < i; j++){
@@ -312,13 +264,16 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
         }
     }
 
+    // Call actual train data
     train(data, labels, numSamples,numFeatures);
 }
 
 int DecisionTree::predict(const bool* data){
     DecisionTreeNode* curr = root;
 
+    // Start from root, continue until node is leaf
     while(!(curr->isLeaf())){
+        //Decide which child node and iterate
         if(data[curr->getItem()] == 0){
             curr = curr->getLeftChildPtr();
         }else{
@@ -332,29 +287,27 @@ int DecisionTree::predict(const bool* data){
 double DecisionTree::test(const bool** data, const int* labels, const int numSamples){
     int correct = 0;
 
+    // Iterate through each sample and evaluate the guess
     for(int i = 0; i < numSamples; i++){
         if(predict(data[i]) == labels[i]){
             correct++;
         }
     }
 
+    // Return the ratio
     return (double)correct/(double)numSamples;
-}
-
-int DecisionTree::getFeatureCount(){ ////////////////----------------------- !!!!!!!!!! DELETE FROM HERE AND HEADER !!!!!!!!!! -----------------------////////////////
-    return featureNum;
 }
 
 double DecisionTree::test(const string fileName, const int numSamples){
     ifstream dataReader;
     ifstream labelReader;
 
-    dataReader.open(fileName.c_str()); //""
-   // cout << dataReader.is_open()<< endl;
+    dataReader.open(fileName.c_str());
     int condition;
 
     const bool** data = new const bool* [numSamples];
 
+    // Read data
     int counter = 0;
     for(int i = 0; i < numSamples; i++){
         bool* line = new bool[featureNum];
@@ -362,15 +315,13 @@ double DecisionTree::test(const string fileName, const int numSamples){
         bool loop = true;
 
     while((dataReader >> condition) && loop){
-            //cout<< condition << endl;
             line[counter] = condition;
             counter++;
 
             if(counter == featureNum)
                 loop = false;
         }
-        //infileReader >> condition;
-        //loop = true;
+
         counter = 0;
         data[i] = line;
     }
@@ -381,25 +332,13 @@ double DecisionTree::test(const string fileName, const int numSamples){
 
     counter = 1;
 
+    //read labels
     while(labelReader >> condition){
         if(counter % (featureNum + 1) == 0)
             labels[(counter / (featureNum + 1)) - 1 ] = condition;
         counter++;
     }
 
-
-//    for(int i = 0; i < numSamples; i++){
-//            out << labels[i] << endl;
-//        for(int j = 0; j < 21; j++){
-//            cout << data[i][j];
-//        }
-//        cout << endl;
-//    }
-//
-//    cout <<"----------------------------------------------- "<<endl;
-//    for(int i = 0; i < numSamples; i++){
-//            cout << labels[i] << endl;
-//    }
-
+    // Test the given input and return the result
     return test(data,labels,numSamples);
 }

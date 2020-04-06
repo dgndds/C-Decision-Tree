@@ -40,16 +40,7 @@ int main( int argc, const char* argv[] )
 //   const int labels[5] = {1,2,1,3,2};
     DecisionTree tree;
 //    tree.train(data, labels, 5,5);
-////
-//
-//
-////        //Free each sub-array
-////    for(int i = 0; i < 5; ++i) {
-////        delete[] data[i];
-////    }
-////    //Free the array of pointers
-////    delete[] data;
-////delete[] labels;
+
     const string fileName = "E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt";
 
     tree.train(fileName, 498, 21);

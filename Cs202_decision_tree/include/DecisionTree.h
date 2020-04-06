@@ -16,7 +16,6 @@ class DecisionTree
         double test(const bool** data, const int* labels, const int numSamples);
         double test(const string fileName, const int numSamples);
         void print();
-        int getFeatureCount();
     private:
         DecisionTreeNode* root;
         DecisionTreeNode* leftChild;

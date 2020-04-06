@@ -19,7 +19,7 @@ class DecisionTreeNode
 
     private:
         int item; // Data portion
-        bool leaf;
+        bool leaf; // leaf or not
         DecisionTreeNode* leftChildPtr; // Pointer to left child
         DecisionTreeNode* rightChildPtr; // Pointer to right child
 
