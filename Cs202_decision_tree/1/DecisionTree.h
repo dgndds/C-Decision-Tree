@@ -21,9 +21,9 @@ class DecisionTree
         DecisionTreeNode* root;
         DecisionTreeNode* leftChild;
         DecisionTreeNode* rightChild;
-        int sampleNum;
-        int featureNum;
-        int featureTypeCount;
+        int sampleNum = 0;
+        int featureNum = 0;
+        int featureTypeCount = 0;
         void preorder(DecisionTreeNode* root,const int tabCount);
         DecisionTreeNode* split(const bool** data, const int* labels, const int numSamples, const int numFeatures,const bool* usedSamples,DecisionTreeNode* node, const int counter,bool usedLabelsArr[]);
 

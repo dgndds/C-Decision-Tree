@@ -40,15 +40,9 @@ double calculateInformationGain(const bool** data, const int* labels, const int 
 //    int parentArr[3] = {0,0,0};
 //    int leftArr[3] = {0,0,0};
 //    int rightArr[3] = {0,0,0};
-    int parentArr[labelCount];
-    int leftArr[labelCount];
-    int rightArr[labelCount];
-
-    for(int i = 0; i < labelCount; i++){
-            parentArr[i] = 0;
-            leftArr[i] = 0;
-            rightArr[i] = 0;
-    }
+    int parentArr[labelCount] = {0};
+    int leftArr[labelCount] = {0};
+    int rightArr[labelCount] = {0};
 
      int observationCount = 0;
 

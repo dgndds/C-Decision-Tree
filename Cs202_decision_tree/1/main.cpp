@@ -50,7 +50,7 @@ int main( int argc, const char* argv[] )
 ////    //Free the array of pointers
 ////    delete[] data;
 ////delete[] labels;
-    const string fileName = "E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt";
+    const string fileName = "train_data.txt";
 
     tree.train(fileName, 498, 21);
 
@@ -59,9 +59,8 @@ int main( int argc, const char* argv[] )
 //
     //const bool* predictArr = new const bool[21]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1};
     //cout << tree.predict(predictArr) << endl;
-    const string fileName1 = "E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\test_data.txt";
 
-    double accuracy = tree.test(fileName1, 473);
+    double accuracy = tree.test(fileName, 473);
     cout << endl << "accuracy: " << accuracy << endl;
 
 	return 0;

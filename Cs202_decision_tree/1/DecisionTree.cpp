@@ -106,11 +106,7 @@ DecisionTreeNode* DecisionTree::split(const bool** data, const int* labels, cons
 
     int labelCount = 0;
     int* uniqeLabels = findFeatureFrequecy(labels, usedSamplesArr, numSamples,labelCount);
-    int countLabelsArr[labelCount];
-
-    for(int i = 0; i < labelCount; i++){
-        countLabelsArr[i] = 0;
-    }
+    int countLabelsArr[labelCount] = {0};
     // Calculate label counts of each used label for parent root
 //    for(int i = 0; i < numSamples; i++){
 //        if(usedSamplesArr[i]){
@@ -251,7 +247,7 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
     ifstream dataReader;
     ifstream labelReader;
 
-    dataReader.open(fileName.c_str()); //""
+    dataReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt"); //""
    // cout << dataReader.is_open()<< endl;
     int condition;
 
@@ -277,7 +273,7 @@ void DecisionTree::train(const string fileName, const int numSamples, const int 
         data[i] = line;
     }
 
-    labelReader.open(fileName.c_str());
+    labelReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\train_data.txt");
 
     int* labels = new int[numSamples];
 
@@ -349,7 +345,7 @@ double DecisionTree::test(const string fileName, const int numSamples){
     ifstream dataReader;
     ifstream labelReader;
 
-    dataReader.open(fileName.c_str()); //""
+    dataReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\test_data.txt"); //""
    // cout << dataReader.is_open()<< endl;
     int condition;
 
@@ -375,7 +371,7 @@ double DecisionTree::test(const string fileName, const int numSamples){
         data[i] = line;
     }
 
-    labelReader.open(fileName.c_str());
+    labelReader.open("E:\\Cs 202 hws\\C-Decision-Tree\\Cs202_decision_tree\\src\\test_data.txt");
 
     int* labels = new int[numSamples];
 
